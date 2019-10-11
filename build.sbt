@@ -1,7 +1,6 @@
 import sbt.Keys.scalacOptions
 import scala.sys.process._
 import org.enso.build.BenchTasks._
-import org.enso.build.WithDebugCommand
 
 //////////////////////////////
 //// Global Configuration ////
@@ -81,7 +80,7 @@ lazy val buildNativeImage =
 
 lazy val enso = (project in file("."))
   .settings(version := "0.1")
-  .aggregate(syntax, pkg, interpreter)
+  .aggregate(syntax)
   .settings(Global / concurrentRestrictions += Tags.exclusive(Exclusive))
 
 ////////////////////////////
@@ -195,115 +194,3 @@ lazy val syntax = (project in file("Syntax/specialization"))
       })
       .value
   )
-
-lazy val pkg = (project in file("Pkg"))
-  .settings(
-    mainClass in (Compile, run) := Some("org.enso.pkg.Main"),
-    version := "0.1",
-    libraryDependencies ++= circe ++ Seq("commons-io" % "commons-io" % "2.6")
-  )
-
-val truffleRunOptions = Seq(
-  fork := true,
-  javaOptions += s"-Dgraal.TruffleIterativePartialEscape=true",
-  javaOptions += s"-XX:-UseJVMCIClassLoader",
-  javaOptions += s"-Dgraal.TruffleBackgroundCompilation=false"
-)
-
-lazy val interpreter = (project in file("Interpreter"))
-  .settings(
-    mainClass in (Compile, run) := Some("org.enso.interpreter.Main"),
-    version := "0.1",
-    commands += WithDebugCommand.withDebug,
-    inConfig(Compile)(truffleRunOptions),
-    inConfig(Test)(truffleRunOptions),
-    parallelExecution in Test := false,
-    logBuffered in Test := false,
-    libraryDependencies ++= jmh ++ Seq(
-      "com.chuusai"            %% "shapeless"                % "2.3.3",
-      "org.apache.commons"     % "commons-lang3"             % "3.9",
-      "org.apache.tika"        % "tika-core"                 % "1.21",
-      "org.graalvm.sdk"        % "graal-sdk"                 % graalVersion,
-      "org.graalvm.sdk"        % "polyglot-tck"              % graalVersion,
-      "org.graalvm.truffle"    % "truffle-api"               % graalVersion,
-      "org.graalvm.truffle"    % "truffle-dsl-processor"     % graalVersion,
-      "org.graalvm.truffle"    % "truffle-tck"               % graalVersion,
-      "org.graalvm.truffle"    % "truffle-tck-common"        % graalVersion,
-      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-      "org.scalacheck"         %% "scalacheck"               % "1.14.0" % Test,
-      "org.scalactic"          %% "scalactic"                % "3.0.8" % Test,
-      "org.scalatest"          %% "scalatest"                % "3.2.0-SNAP10" % Test,
-      "org.typelevel"          %% "cats-core"                % "2.0.0-M4",
-      "commons-cli"            % "commons-cli"               % "1.4"
-    ),
-    libraryDependencies ++= jmh
-  )
-  .settings(
-    (Compile / javacOptions) ++= Seq(
-      "-s",
-      (Compile / sourceManaged).value.getAbsolutePath
-    )
-  )
-  .settings(
-    (Compile / compile) := (Compile / compile)
-      .dependsOn(Def.task { (Compile / sourceManaged).value.mkdirs })
-      .value
-  )
-  .settings(
-    buildNativeImage := Def
-      .task {
-        val javaHome        = System.getProperty("java.home")
-        val nativeImagePath = s"$javaHome/bin/native-image"
-        val classPath       = (Runtime / fullClasspath).value.files.mkString(":")
-        val cmd =
-          s"$nativeImagePath --macro:truffle --no-fallback --initialize-at-build-time -cp $classPath ${(Compile / mainClass).value.get} enso"
-        cmd !
-      }
-      .dependsOn(Compile / compile)
-      .value
-  )
-  .configs(Benchmark)
-  .settings(
-    logBuffered := false,
-    inConfig(Benchmark)(Defaults.testSettings),
-    inConfig(Benchmark)(truffleRunOptions),
-    bench := (test in Benchmark).tag(Exclusive).value,
-    benchOnly := Def.inputTaskDyn {
-      import complete.Parsers.spaceDelimited
-      val name = spaceDelimited("<name>").parsed match {
-        case List(name) => name
-        case _          => throw new IllegalArgumentException("Expected one argument.")
-      }
-      Def.task {
-        (testOnly in Benchmark).toTask(" -- -z " + name).value
-      }
-    }.evaluated,
-    parallelExecution in Benchmark := false
-  )
-  .dependsOn(pkg)
-
-lazy val fileManager = (project in file("FileManager"))
-  .settings(
-    (Compile / mainClass) := Some("org.enso.filemanager.FileManager")
-  )
-  .settings(
-    libraryDependencies ++= akka,
-    libraryDependencies += akkaSLF4J,
-    libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
-    libraryDependencies += "org.scalatest"  %% "scalatest"      % "3.2.0-SNAP10" % Test,
-    libraryDependencies += "org.scalacheck" %% "scalacheck"     % "1.14.0" % Test,
-    libraryDependencies += akkaTestkitTyped,
-    libraryDependencies += "commons-io" % "commons-io"        % "2.6",
-    libraryDependencies += "io.methvin" % "directory-watcher" % "0.9.6"
-  )
-
-lazy val projectManager = (project in file("ProjectManager"))
-  .settings(
-    (Compile / mainClass) := Some("org.enso.projectmanager.Server")
-  )
-  .settings(
-    libraryDependencies ++= akka,
-    libraryDependencies ++= circe,
-    libraryDependencies += "io.spray" %% "spray-json" % "1.3.5"
-  )
-  .dependsOn(pkg)
