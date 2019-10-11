@@ -79,7 +79,7 @@ object DocParserHTMLGenerator {
 
   /**
     * This method is used for generation of HTML files from parsed and
-    * reformatted [[AST.Documented]]
+    * reformatted [[Doc]]
     *
     * @param doc - parsed AST.Module and reformatted using Doc Parser
     * @param path - path to save file
@@ -123,8 +123,7 @@ object DocParserHTMLGenerator {
     *
     * @param doc - Doc from Doc Parser
     * @param cssLink - string containing CSS file name
-    * @return - HTML Code from Doc and contents of [[AST.Def]] or
-    *           [[AST.App.Infix]], with optional title made from AST
+    * @return - HTML Code from Doc
     */
   def renderHTML(
     doc: Doc,
