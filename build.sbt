@@ -110,27 +110,6 @@ val scala_compiler = Seq(
 val circe = Seq("circe-core", "circe-generic", "circe-yaml")
   .map("io.circe" %% _ % "0.10.0")
 
-def akkaPkg(name: String)     = akkaURL %% s"akka-$name" % akkaVersion
-def akkaHTTPPkg(name: String) = akkaURL %% s"akka-$name" % akkaHTTPVersion
-
-val akkaURL          = "com.typesafe.akka"
-val akkaVersion      = "2.5.23"
-val akkaHTTPVersion  = "10.1.8"
-val akkaActor        = akkaPkg("actor")
-val akkaStream       = akkaPkg("stream")
-val akkaTyped        = akkaPkg("actor-typed")
-val akkaTestkit      = akkaPkg("testkit")
-val akkaSLF4J        = akkaPkg("slf4j")
-val akkaTestkitTyped = akkaPkg("actor-testkit-typed") % Test
-val akkaHttp         = akkaHTTPPkg("http")
-val akkaSpray        = akkaHTTPPkg("http-spray-json")
-val akka             = Seq(akkaActor, akkaStream, akkaHttp, akkaSpray, akkaTyped)
-
-val jmh = Seq(
-  "org.openjdk.jmh" % "jmh-core"                 % "1.21" % Benchmark,
-  "org.openjdk.jmh" % "jmh-generator-annprocess" % "1.21" % Benchmark
-)
-
 //////////////////////
 //// Sub-Projects ////
 //////////////////////
