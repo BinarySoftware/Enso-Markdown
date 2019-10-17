@@ -18,10 +18,8 @@ import flexer.Parser.{Result => res}
 /**
   * This is the class used to invoke Documentation Parser.
   *
-  * It is used to create structured documentation from the blocks of commented
-  * text created by the main Enso parser.
-  * It has been built on the same foundation as Parser, so in order not to
-  * duplicate information, please refer to Parser documentation.
+  * It is used to create structured documentation from user input, just like
+  * markdown, but it is superior to it.
   */
 class DocParser {
   import DocParser._
@@ -69,17 +67,17 @@ object DocParser {
   *
   * Essentially it enables Doc Parser to create pretty HTML files from documented
   * code.
+  *
   * When Doc Parser finishes its job user can invoke DocParserHTMLGenerator by
   * simply passing the output of Doc Parser onto function called
-  * [[DocParserHTMLGenerator.generateHTML]]
-  * It will automatically traverse through AST prepared by Doc Parser and generate
-  * HTML files in all appropriate places.
+  * [[DocParserHTMLGenerator.generateHTML]] that will automatically traverse
+  * through AST prepared by Doc Parser and generate HTML files in all
+  * appropriate places.
   */
 object DocParserHTMLGenerator {
 
   /**
-    * This method is used for generation of HTML files from parsed and
-    * reformatted [[Doc]]
+    * This method is used for generation of HTML files from parsed [[Doc]]
     *
     * @param doc - parsed AST.Module and reformatted using Doc Parser
     * @param path - path to save file
