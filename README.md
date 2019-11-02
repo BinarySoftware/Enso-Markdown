@@ -7,20 +7,12 @@ This is the most advanced "Markdown-ish" tool on the market, with highest perfor
 
 ## How to run it?
 
-1. Install sbt
-2. clone this repo and launch in it sbt
-3. go to project by typing `project syntax`
+1. Install Scala Compiler and SBT. For reference please visit [Scala's](https://www.scala-lang.org) homepage
+2. clone this repo and launch in it `sbt`
 4. `run`
 
 What you'll receive is html file generated from exaple.
-
 To create your own page simply edit "inp" in `Main.scala` file.
-
-## TODO
-- To be further simplified and more user-friendly
-- No need to change projects
-- Take data from outer file or create Front-end app for parser (Scala + JS?)
-
 
 # Enso Documentation Parser Reference
 The Doc Parser is a really powerful tool, so even if user will make a mistake, it can still try to assign 
