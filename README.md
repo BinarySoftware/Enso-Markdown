@@ -16,9 +16,15 @@ What you'll receive is html file generated from exaple.
 
 To create your own page simply edit "inp" in `Main.scala` file.
 
-### To be further simplified and more user-friendly
+## TODO
+- To be further simplified and more user-friendly
+- No need to change projects
+- Take data from outer file or create Front-end app for parser (Scala + JS?)
+- Write Reference and TLDR cheatsheet
 
-# Enso Documentation Parser - Cheatsheet
+
+
+# Enso Documentation Parser Reference
 ### Tags
 Starting from the top of the file, you can add tags.
 There are 5 available tags : 
@@ -37,6 +43,8 @@ with one space.
 So if you want to declare tags, simply write them in uppercase on top of the file, before parser begins creation 
 of other sections.
 
+And this is how tags will be rendered:
+
 ### Segments
 Every time you create 2 newlines, parser will start a new text segment and close the previous one. 
 The first segment you'll write will go to the `Synopsis` part of the document, rest will be in the `Body`.
@@ -53,3 +61,5 @@ And this is how you invoke them
  - Important - Just add `!` before the segment title
  - Info - Just add `?` before the segment title
  - Example - Just add `>` before the segment title
+ 
+ And this is how particular sections will look like after rendering:
