@@ -1,7 +1,8 @@
 <h1 align="center">Enso Documentation Parser</h1>
 
 This is a standalone edition of Enso Documentation Parser and HTML Generator.
-For Enso language which contains even more advancd version of Doc Parser please visit [luna/enso](https://github.com/luna/enso) repository
+For Enso language which contains even more advancd version of Doc Parser please visit [luna/enso](https://github.com/luna/enso) repository.
+This Code uses libraries created for Enso project - Flexer, Logger, and tools such as ADT, Compare, List1, Pool, Shifted, Tree etc.
 
 This is the most advanced "Markdown-ish" tool on the market, with highest performance of 7.3 mln characters parsed per second
 
