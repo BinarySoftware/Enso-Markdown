@@ -80,8 +80,10 @@ lazy val buildNativeImage =
 
 lazy val enso = (project in file("."))
   .settings(version := "0.1")
-  .aggregate(syntax)
+  .aggregate(DocParser)
   .settings(Global / concurrentRestrictions += Tags.exclusive(Exclusive))
+
+onLoad in Global ~= (_ andThen ("project DocParser" :: _))
 
 ////////////////////////////
 //// Dependency Bundles ////
@@ -143,7 +145,7 @@ lazy val syntax_definition = (project in file("Syntax/definition"))
     )
   )
 
-lazy val syntax = (project in file("Syntax/specialization"))
+lazy val DocParser = (project in file("Syntax/specialization"))
   .dependsOn(logger, flexer, syntax_definition)
   .configs(Test)
   .configs(Benchmark)
